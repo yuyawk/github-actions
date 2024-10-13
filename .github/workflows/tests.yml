@@ -32,7 +32,7 @@ jobs:
           ref: ${{ github.head_ref }}
       - name: Use the action
         uses: ./install-bazelisk
-      - name: Check if bazelisk is insalled
+      - name: Check if bazelisk is installed
         shell: bash
         run: |
           bazelisk --version
