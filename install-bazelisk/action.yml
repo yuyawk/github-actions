@@ -1,0 +1,31 @@
+---
+name: Install bazelisk
+
+inputs:
+  bazelisk-version:
+    description: Bazelisk version
+    required: false
+    default: "v1.22.0"
+
+runs:
+  using: composite
+  steps:
+    - name: Install bazelisk
+      shell: bash
+      run: |
+        bazelisk_dir=$(realpath "$(mktemp -d bazelisk_dir.XXXXXXXXXX)")
+        if [ "${RUNNER_OS}" == "Linux" ]; then
+          bazelisk_basename="bazelisk-linux-amd64"
+        elif [ "${RUNNER_OS}" == "macOS" ]; then
+          bazelisk_basename="bazelisk-darwin-amd64"
+        elif [ "${RUNNER_OS}" == "Windows" ]; then
+          bazelisk_basename="bazelisk-windows-amd64.exe"
+        else
+          echo "${RUNNER_OS} not supported"
+          exit 1
+        fi
+
+        curl -OL "https://github.com/bazelbuild/bazelisk/releases/download/${{ inputs.bazelisk-version }}/${bazelisk_basename}" && \
+          mv "${bazelisk_basename}" "${bazelisk_dir}/bazelisk"
+        chmod +x "${bazelisk_dir}/bazelisk"
+        echo "${bazelisk_dir}" >> "${GITHUB_PATH}"

@@ -11,16 +11,36 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
-    runs-on: ubuntu-22.04
+  test-install-bazelisk:
+    strategy:
+      matrix:
+        bazel-version:
+          - 6.5.0
+          - 7.1.1
+        runner:
+          - ubuntu-20.04
+          - ubuntu-22.04
+          - macos-13
+          - macos-14
+          - windows-2019
+          - windows-2022
+    runs-on: ${{ matrix.runner }}
     steps:
-      - run: |
-          echo "Dummy test"
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Use the action
+        uses: ./install-bazelisk
+      - name: Check if bazelisk is installed
+        shell: bash
+        run: |
+          bazelisk --version
 
   all-tests-passable:
     if: always()
     needs:
-      - test
+      - test-install-bazelisk
     runs-on: ubuntu-22.04
     steps:
       - name: Decide whether the needed jobs succeeded or failed
