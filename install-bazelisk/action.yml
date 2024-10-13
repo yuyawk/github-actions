@@ -13,7 +13,7 @@ runs:
     - name: Install bazelisk
       shell: bash
       run: |
-        bazelisk_dir=$(realpath "$(mktemp -d -p .)")
+        bazelisk_dir=$(realpath "$(mktemp -d bazelisk_dir.XXXXXXXXXX)")
         if [ "${RUNNER_OS}" == "Linux" ]; then
           bazelisk_basename="bazelisk-linux-amd64"
         elif [ "${RUNNER_OS}" == "macOS" ]; then
