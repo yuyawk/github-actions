@@ -18,4 +18,4 @@ jobs:
           private-key: ${{ secrets.TAG_UPDATER_APP_PRIVATE_KEY }}
       - uses: nowactions/update-majorver@v1
         with:
-          github-token: ${{ steps.app-token.outputs.token }}
+          github_token: ${{ steps.app-token.outputs.token }}
