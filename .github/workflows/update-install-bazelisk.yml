@@ -1,5 +1,5 @@
 ---
-name: Update bazelisk if needed
+name: Update `install-bazelisk` if needed
 
 on:
   schedule:
@@ -19,9 +19,9 @@ jobs:
         with:
           app-id: ${{ secrets.UPDATE_IF_NEEDED_APP_ID }}
           private-key: ${{ secrets.UPDATE_IF_NEEDED_APP_PRIVATE_KEY }}
-      - name: Update bazelisk if needed
+      - name: Update `install-bazelisk` if needed
         uses: ./update-if-needed
         with:
           github-token: ${{ steps.app-token.outputs.token }}
-          updater: .github/workflows/scripts/update-bazelisk.bash
+          updater: .github/workflows/scripts/update-install-bazelisk.bash
           target: install-bazelisk/action.yml
