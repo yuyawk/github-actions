@@ -25,7 +25,9 @@ runs:
           exit 1
         fi
 
-        curl -OL "https://github.com/bazelbuild/bazelisk/releases/download/${{ inputs.bazelisk-version }}/${bazelisk_basename}" && \
+        curl -OL "https://github.com/bazelbuild/bazelisk/releases/download/${BAZELISK_VERSION}/${bazelisk_basename}" && \
           mv "${bazelisk_basename}" "${bazelisk_dir}/bazelisk"
         chmod +x "${bazelisk_dir}/bazelisk"
         echo "${bazelisk_dir}" >> "${GITHUB_PATH}"
+      env:
+        BAZELISK_VERSION: ${{ inputs.bazelisk-version }}
