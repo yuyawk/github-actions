@@ -1,0 +1,30 @@
+---
+name: Create a PR to update a file if needed
+
+inputs:
+  github-token:
+    description: The token that the action will use
+    required: true
+  updater:
+    description: Executable to update the target
+    required: true
+  target:
+    description: File to update if needed
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Try modifying the file
+      shell: bash
+      run: "${UPDATER}" "${TARGET}"
+      env:
+        UPDATER: ${{ inputs.updater }}
+        TARGET: ${{ inputs.target }}
+    - name: Create a PR if needed
+      uses: peter-evans/create-pull-request@v7
+      with:
+        commit-message: "Update ${{ inputs.target }} with ${{ inputs.updater }}"
+        delete-branch: true
+        title: "chore: Update ${{ inputs.target }} with ${{ inputs.updater }}"
+        token: "${{ inputs.github-token }}"
