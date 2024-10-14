@@ -5,6 +5,7 @@ inputs:
   bazelisk-version:
     description: Bazelisk version
     required: false
+    # Note that the default value below is automatically managed by `.github/workflows/update-install-bazelisk.yml`
     default: "v1.22.0"
 
 runs:
