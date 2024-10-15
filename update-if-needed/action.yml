@@ -17,7 +17,8 @@ runs:
   steps:
     - name: Try modifying the file
       shell: bash
-      run: "${UPDATER}" "${TARGET}"
+      run: |
+        "${UPDATER}" "${TARGET}"
       env:
         UPDATER: ${{ inputs.updater }}
         TARGET: ${{ inputs.target }}
