@@ -11,10 +11,24 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Install bazelisk
+    - name: Make directory
+      shell: bash
+      id: mkdir
+      run: |
+        bindir="${RUNNER_TEMP}/${GITHUB_REPOSITORY}/install-bazelisk"
+        mkdir -p "${bindir}"
+        echo "${bindir}" >> "${GITHUB_PATH}"
+        echo "bindir=${bindir}" >> "${GITHUB_OUTPUT}"
+    - name: Cache downloaded binary
+      uses: actions/cache@v4
+      id: cache
+      with:
+        path: ${{ steps.mkdir.outputs.bindir }}
+        key: ${{ github.action_repository }}-${{ runner.os }}-${{ inputs.bazelisk-version }}
+    - name: Install bazelisk if needed
+      if: ${{ steps.cache.outputs.cache-hit != 'true' }}
       shell: bash
       run: |
-        bazelisk_dir=$(realpath "$(mktemp -d bazelisk_dir.XXXXXXXXXX)")
         if [ "${RUNNER_OS}" == "Linux" ]; then
           bazelisk_basename="bazelisk-linux-amd64"
         elif [ "${RUNNER_OS}" == "macOS" ]; then
@@ -27,8 +41,8 @@ runs:
         fi
 
         curl -OL "https://github.com/bazelbuild/bazelisk/releases/download/${BAZELISK_VERSION}/${bazelisk_basename}" && \
-          mv "${bazelisk_basename}" "${bazelisk_dir}/bazelisk"
-        chmod +x "${bazelisk_dir}/bazelisk"
-        echo "${bazelisk_dir}" >> "${GITHUB_PATH}"
+          mv "${bazelisk_basename}" "${BINDIR}/bazelisk"
+        chmod +x "${BINDIR}/bazelisk"
       env:
         BAZELISK_VERSION: ${{ inputs.bazelisk-version }}
+        BINDIR: ${{ steps.mkdir.outputs.bindir }}
