@@ -15,7 +15,7 @@ runs:
       shell: bash
       id: mkdir
       run: |
-        bindir="${RUNNER_TEMP}/${GITHUB_REPOSITORY}/install-bazelisk"
+        bindir="${RUNNER_TEMP}/${GITHUB_ACTION_REPOSITORY}/${GITHUB_ACTION_PATH}"
         mkdir -p "${bindir}"
         echo "${bindir}" >> "${GITHUB_PATH}"
         echo "bindir=${bindir}" >> "${GITHUB_OUTPUT}"
@@ -24,7 +24,7 @@ runs:
       id: cache
       with:
         path: ${{ steps.mkdir.outputs.bindir }}
-        key: ${{ github.action_repository }}-${{ runner.os }}-${{ inputs.bazelisk-version }}
+        key: ${{ github.action_repository }}-${{ github.action_path }}-${{ runner.os }}-${{ inputs.bazelisk-version }}
     - name: Install bazelisk if needed
       if: ${{ steps.cache.outputs.cache-hit != 'true' }}
       shell: bash
