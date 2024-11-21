@@ -15,7 +15,6 @@ runs:
       uses: actions/github-script@v7
       with:
         script: |
-          const core = require('@actions/core');
           const fetch = require('node-fetch');
           const url = 'https://api.github.com/repos/bazelbuild/bazelisk/releases/latest';
           const headers = {
