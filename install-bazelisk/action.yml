@@ -3,14 +3,29 @@ name: Install bazelisk
 
 inputs:
   bazelisk-version:
-    description: Bazelisk version
+    description: Bazelisk version. Defaults to the latest version.
     required: false
-    # Note that the default value below is managed by `.github/workflows/update-install-bazelisk.yml`
-    default: "v1.24.0"
+    default: null
 
 runs:
   using: composite
   steps:
+    - name: Set default version
+      if: ${{ inputs.bazelisk-version == null }}
+      shell: bash
+      run: |
+        latest_tag=$(curl -H "X-GitHub-Api-Version:2022-11-28" \
+          -s https://api.github.com/repos/bazelbuild/bazelisk/releases/latest \
+          | grep -o '"name": "v[0-9]\+\.[0-9]\+\.[0-9]\+"' \
+          | sed 's/"name": "\(.*\)"/\1/')
+        echo "bazelisk_target_version=${latest_tag}" >> ${GITHUB_ENV}
+    - name: Set given version
+      if: ${{ inputs.bazelisk-version != null }}
+      shell: bash
+      run: |
+        echo "bazelisk_target_version=${BAZELISK_VERSION}" >> ${GITHUB_ENV}
+      env:
+        BAZELISK_VERSION: ${{ inputs.bazelisk-version }}
     - name: Make directory
       shell: bash
       id: mkdir
@@ -24,7 +39,7 @@ runs:
       id: cache
       with:
         path: ${{ steps.mkdir.outputs.bindir }}
-        key: yuyawk/github-actions/install-bazelisk-${{ runner.os }}-${{ inputs.bazelisk-version }}
+        key: yuyawk/github-actions/install-bazelisk-${{ runner.os }}-${{ env.bazelisk_target_version }}
     - name: Install bazelisk if needed
       if: ${{ steps.cache.outputs.cache-hit != 'true' }}
       shell: bash
@@ -40,9 +55,8 @@ runs:
           exit 1
         fi
 
-        curl -OL "https://github.com/bazelbuild/bazelisk/releases/download/${BAZELISK_VERSION}/${bazelisk_basename}" && \
+        curl -OL "https://github.com/bazelbuild/bazelisk/releases/download/${bazelisk_target_version}/${bazelisk_basename}" && \
           mv "${bazelisk_basename}" "${BINDIR}/bazelisk"
         chmod +x "${BINDIR}/bazelisk"
       env:
-        BAZELISK_VERSION: ${{ inputs.bazelisk-version }}
         BINDIR: ${{ steps.mkdir.outputs.bindir }}
