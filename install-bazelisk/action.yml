@@ -16,6 +16,7 @@ runs:
       with:
         script: |
           const resp = await github.request('GET /repos/bazelbuild/bazelisk/releases/latest');
+          console.log(resp);
           const json = JSON.parse(resp.data);
           core.exportVariable('bazelisk_target_version', json.name);
     - name: Set given version
