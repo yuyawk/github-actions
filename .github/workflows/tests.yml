@@ -23,6 +23,9 @@ jobs:
           - macos-14
           - windows-2019
           - windows-2022
+        bazelisk-version:
+          - null
+          - v1.23.0
     runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout
@@ -31,6 +34,8 @@ jobs:
           ref: ${{ github.head_ref }}
       - name: Use the action
         uses: ./install-bazelisk
+        with:
+          bazelisk-version: ${{ matrix.bazelisk-version }}
       - name: Check if bazelisk is installed
         shell: bash
         run: |
