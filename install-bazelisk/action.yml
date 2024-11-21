@@ -12,12 +12,22 @@ runs:
   steps:
     - name: Set default version
       if: ${{ inputs.bazelisk-version == null }}
-      shell: bash
-      run: |
-        latest_tag=$(curl -H "X-GitHub-Api-Version:2022-11-28" \
-          -s https://api.github.com/repos/bazelbuild/bazelisk/releases/latest \
-          | python3 -c "import sys, json; print(json.load(sys.stdin)['name'])")
-        echo "bazelisk_target_version=${latest_tag}" >> ${GITHUB_ENV}
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const core = require('@actions/core');
+          const fetch = require('node-fetch');
+          const url = 'https://api.github.com/repos/bazelbuild/bazelisk/releases/latest';
+          const headers = {
+            'X-GitHub-Api-Version': '2022-11-28',
+          };
+
+          const response = await fetch(url, { headers });
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          const data = await response.json();
+          core.exportVariable('bazelisk_target_version', data.name);
     - name: Set given version
       if: ${{ inputs.bazelisk-version != null }}
       shell: bash
