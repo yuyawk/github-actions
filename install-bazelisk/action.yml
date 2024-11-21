@@ -15,35 +15,11 @@ runs:
       uses: actions/github-script@v7
       with:
         script: |
-          const http = require('http');
-
-          const options = {
-            hostname: 'api.github.com',
-            path: '/repos/bazelbuild/bazelisk/releases/latest',
-            headers: {
-              'User-Agent': 'From github actions',
-              'X-GitHub-Api-Version': '2022-11-28',
-            },
-          };
-
-          const req = http.request(options, (res) => {
-            let data = '';
-
-            res.on('data', (chunk) => {
-              data += chunk;
-            });
-
-            res.on('end', () => {
-              const json = JSON.parse(data);
-              core.exportVariable('bazelisk_target_version', json.name);
-            });
+          const result = await request("GET /repos/{owner}/{repo}/releases/latest", {
+            owner: "bazelbuild",
+            repo: "bazelisk",
           });
-
-          req.on('error', (error) => {
-            throw new Error(`Request error! : ${error}`);
-          });
-
-          req.end();
+          core.exportVariable('bazelisk_target_version', result.data.name);
     - name: Set given version
       if: ${{ inputs.bazelisk-version != null }}
       shell: bash
