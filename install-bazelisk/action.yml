@@ -34,9 +34,6 @@ runs:
             });
 
             res.on('end', () => {
-              if (res.statusCode !== 200) {
-                throw new Error(`HTTP error! Status: ${res.statusCode}`);
-              }
               const json = JSON.parse(data);
               core.exportVariable('bazelisk_target_version', json.name);
             });
