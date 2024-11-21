@@ -15,11 +15,8 @@ runs:
       uses: actions/github-script@v7
       with:
         script: |
-          const result = await octokit.request("GET /repos/{owner}/{repo}/releases/latest", {
-            owner: "bazelbuild",
-            repo: "bazelisk",
-          });
-          const json = JSON.parse(result.data);
+          const resp = await github.request('GET /repos/bazelbuild/bazelisk/releases/latest');
+          const json = JSON.parse(resp.data);
           core.exportVariable('bazelisk_target_version', json.name);
     - name: Set given version
       if: ${{ inputs.bazelisk-version != null }}
