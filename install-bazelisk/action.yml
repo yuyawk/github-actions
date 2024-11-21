@@ -16,8 +16,7 @@ runs:
       run: |
         latest_tag=$(curl -H "X-GitHub-Api-Version:2022-11-28" \
           -s https://api.github.com/repos/bazelbuild/bazelisk/releases/latest \
-          | grep -o '"name": "v[0-9]\+\.[0-9]\+\.[0-9]\+"' \
-          | sed 's/"name": "\(.*\)"/\1/')
+          | jq -r '.name')
         echo "bazelisk_target_version=${latest_tag}" >> ${GITHUB_ENV}
     - name: Set given version
       if: ${{ inputs.bazelisk-version != null }}
