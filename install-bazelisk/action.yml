@@ -6,7 +6,7 @@ inputs:
     description: Bazelisk version
     required: false
     # Note that the default value below is managed by `.github/workflows/update-install-bazelisk.yml`
-    default: "v1.23.0"
+    default: "v1.24.0"
 
 runs:
   using: composite
