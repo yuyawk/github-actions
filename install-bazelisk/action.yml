@@ -14,6 +14,7 @@ runs:
       if: ${{ inputs.bazelisk-version == null }}
       shell: bash
       run: |
+        set -ex
         latest_tag=$(curl -H "X-GitHub-Api-Version:2022-11-28" \
             -s https://api.github.com/repos/bazelbuild/bazelisk/releases/latest \
           | grep -oE '"name": "v[0-9]+\.[0-9]+\.[0-9]+"' \
